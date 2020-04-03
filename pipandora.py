@@ -152,6 +152,7 @@ class pandora_player(threading.Thread):
                 readers, _, _ = select.select([self._process.stdout], [], [], 1)
                 for handle in readers:
                     value = handle.read(self.CHUNK_SIZE).strip()
+                    print(value)
                     if "state stopped" in value.decode("utf-8"):
                         self.get_next_song()
 
@@ -186,9 +187,6 @@ class pandora_player(threading.Thread):
         self._process.stdin.write("{}\n".format(cmd).encode("utf-8"))
         self._process.stdin.flush()
 
-
-
-
     def stop(self):
         self._send_cmd("stop")
 
@@ -218,12 +216,12 @@ class pandora_player(threading.Thread):
         input.
         """
 
-        self.pandora_cache['CurrentSong'] = song
-        self.pandora_cache['CurrentRemainingLength'] = song.track_length
-        self.pandora_cache['CurrentSongStartTime'] = int(round(time.time()))
         if song.is_ad:
             self.send_message.put(['pandora,currentsong,Advertisement','pandora,remainingtime, 10','pandora,totaltime, 10']) 
         else:
+            self.pandora_cache['CurrentSong'] = song
+            self.pandora_cache['CurrentRemainingLength'] = song.track_length
+            self.pandora_cache['CurrentSongStartTime'] = int(round(time.time()))
             self.send_message.put(['pandora,currentsong,' + song.song_name + ' by ' + song.artist_name,'pandora,remainingtime,' + str(song.track_length),'pandora,totaltime,'+ str(song.track_length)]) 
         
         self.start_VLC()
