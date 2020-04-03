@@ -226,8 +226,10 @@ class pandora_player(threading.Thread):
 
         if not getattr(self, "_cmd"):
             raise RuntimeError("Player command is not configured")
-
+        print(self._cmd)
         self._process = SilentPopen(self._cmd)
+        print(self._cmd)
+        
         logger.info("Started VLC")
         time.sleep(1)
         print("Check stdout")
