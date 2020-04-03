@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+
+<link rel="apple-touch-startup-image" href="images/hcsSplash.jpg">
+<link href="http://fonts.googleapis.com/css?family=Share:400" rel="stylesheet"> <!-- The button font -->   
+<link rel="stylesheet" href="css/jhButton.css"> <!-- Buttons CSS syles -->    
+<link rel="stylesheet" href="css/jhb-zone.css"> 
+<script src="js/jquery-1.7.1.min.js"></script>  <!-- jQuery -->
+<script src="js/jquery.jhButton.min.js"></script>
+<script src="js/jhb-zone.js"></script>
+
+<style>
+    a { text-decoration:none; }
+    table td { display: table-cell; vertical-align: middle; text-align: left; }
+    select { width: 100%; max-width: 75px; min-width: 75px; }
+    p1 { font-size: 4.3vw; }
+    p2 { font-size: 4.2vmin; }
+    p3 { font-size: 5.0vmin; }
+    p4 { font-size: 4.0vmin; font-weight: bold; }
+    p5 { font-size: 3.5vmin; font-weight: bold; }
+    p6 { font-size: 3.0vmin; }
+</style>
+
+<script type="text/javascript">
+
+$(window).load(function(){ 
+    $('.jhButton').jhButton({ 
+        fx : "iconCircle",           // Rollover effect type : "iconCircle" , "shine" or "none"
+        fxAlpha : 0.8,               // Rollover effect opacity : 0.0 -> 1.0
+        fxColor : "#FFFFFF",         // Rollover effect color : hex color value
+        crystal : "curve",           // Crystal effect type : "linear", "curve", "diagonal" or "none"
+        crystalColor : "#FFFFFF",    // Crystal effect color : hex value
+        crystalAlpha : 0.13,         // Crystal effect opacity : 0.0 -> 1.0
+        iconColor : "auto",          // Set icon color, if iconTint is true : hex color value or "auto"
+        iconsPath : "icons/",        // Set icon folder path
+        iconTint : true              // Tint icon or not : true or false
+    });
+});
+
+
+function vibrate() {
+    if ('vibrate' in navigator) {
+        navigator.vibrate(50);
+    }
+}
+
+jQuery(document).ready(function(){
+
+	jQuery('#zone').live('click', function(event) {     
+	     vibrate();    
+		 jQuery('#zoneContent').show();
+		 jQuery('#radioContent').hide();
+		 jQuery('#pandoraContent').hide();
+		 jQuery('#settingsContent').hide();
+    });
+	jQuery('#radio').live('click', function(event) {
+	     vibrate();         
+		 jQuery('#zoneContent').hide();
+		 jQuery('#radioContent').show();
+		 jQuery('#pandoraContent').hide();
+		 jQuery('#settingsContent').hide();
+    });
+	jQuery('#pandora').live('click', function(event) {  
+	     vibrate();       
+		 jQuery('#zoneContent').hide();
+		 jQuery('#radioContent').hide();
+		 jQuery('#pandoraContent').show();
+		 jQuery('#settingsContent').hide();
+    });
+	jQuery('#settings').live('click', function(event) { 
+	     vibrate();        
+		 jQuery('#zoneContent').hide();
+		 jQuery('#radioContent').hide();
+		 jQuery('#pandoraContent').hide();
+		 jQuery('#settingsContent').show();
+    });
+    jQuery('#up').live('click', function(event) { 
+	     vibrate();  
+	     sendcommand('pandora','like','')  
+    });
+    jQuery('#down').live('click', function(event) { 
+	     vibrate(); 
+	     sendcommand('pandora','dislike','');  
+    });
+    jQuery('#on').live('click', function(event) {
+        var radioValue = $("input[name='PandoraStations']:checked").val();
+        if (typeof radioValue == 'undefined') {
+            alert('Please select a station.');
+        }
+        else {
+            if  ($('#PandoraSong').text() == '' || $('#PandoraSong').text() == '---- Off ----') {
+                sendcommand('pandora','setstation',radioValue);
+            }
+        }
+    });
+});
+
+
+RunTimer = false;
+EndTime = -1;
+
+function SongTimeTimer() {
+ 
+    if (RunTimer == false) { return; }
+
+    var d = new Date();
+    CurrentTime = d.getTime()/1000;
+    RemainingSeconds = Math.round(EndTime-CurrentTime);
+    TotalMinutes = (Math.floor(RemainingSeconds / 60)).toString()
+
+    if ((RemainingSeconds - Math.floor(RemainingSeconds / 60) * 60) < 10) {
+        TotalSeconds = "0" + (RemainingSeconds - Math.floor(RemainingSeconds / 60) * 60).toString()
+    }
+    else {
+        TotalSeconds = (RemainingSeconds - Math.floor(RemainingSeconds / 60) * 60).toString()
+    }
+    RemainingTime = TotalMinutes + ":" + TotalSeconds;
+    $("#PandoraRemainingTime").text(RemainingTime);
+
+    if (RemainingSeconds < 1) {
+        $("#PandoraRemainingTime").text("0:00");
+        RunTimer == false;
+    }
+    else {
+        setTimeout(function() { SongTimeTimer(); }, 100);
+    }
+
+}
+
+ws = new WebSocket("ws://" + window.location.host + "/ws");
+wsclosed = true;
+ws.onopen = function() { wsclosed = false; };
+ws.onmessage = function (evt) { messageReceived(evt); }
+ws.onclose = function() { wsclosed = true; };
+
+stationlistloaded = false;
+
+function messageReceived(evt) {
+    //console.log(arguments.callee.toString().match(/function\s+([^\s\(]+)/)[0]);
+
+    var received_msg = evt.data;
+    data = received_msg.split(',');
+    console.log(data);
+    if (data[0] == 'pandora') {
+        if (data[1] == 'addstations' && !stationlistloaded) {
+            stationlistloaded = true
+            stations = data[2].split('#@#');
+            var table = document.getElementById("stationlist");
+            
+            for (var i = 0; i < stations.length; i++) {
+
+                var row = table.insertRow(0);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                cell1.innerHTML = '<input type="radio" name="PandoraStations" value="' + (i-1) + '" onchange="sendcommand(\'pandora\',\'setstation\',\'' + (i-1) + '\')" style="padding: 0px 0px 0px 0px; width: 32px; height: 32px;" name="address"/>';
+                cell2.innerHTML = '<a href="#" style="padding: 0px 0px 0px 0px; font-size: 6.0vmin; text-decoration: none;" id="' + stations[i] + 'pandora">' + stations[i] + '</a>';
+            }
+        }
+        
+        if (data[1] == 'currentsong') {
+            if (data[2] == '' || data[2] == '---- Off ----') {
+                RunTimer = false;
+                $("#PandoraSong").text('---- Off ----');
+                $("#PandoraRemainingTime").text('--');
+                $("#PandoraSongTime").text('--');
+            }
+            else {
+                $("#PandoraSong").text(data[2]);
+            }
+        }
+
+        if (data[1] == 'currentstation') {
+            $("[name=PandoraStations]").val([data[2]]);
+        }
+
+        if (data[1] == 'pause') {
+            RunTimer = false;
+        } 
+        if (data[1] == 'off') {
+            RunTimer = false;
+            $("#PandoraSong").text('');
+            $("#PandoraRemainingTime").text('--');
+            $("#PandoraSongTime").text('--');
+
+        } 
+        if (data[1] == 'remainingtime') {
+            var d = new Date();
+            EndTime = (d.getTime()/1000) + parseInt(data[2]);
+            RunTimer = true;
+            SongTimeTimer();
+        } 
+        if (data[1] == 'totaltime') {
+            TotalMinutes = (Math.floor(data[2] / 60)).toString()
+            if ((data[2] - Math.floor(data[2] / 60) * 60) < 10) {
+                TotalSeconds = "0" + (data[2] - Math.floor(data[2] / 60) * 60).toString()
+            }
+            else {
+                TotalSeconds = (data[2] - Math.floor(data[2] / 60) * 60).toString()
+            }
+            TotalTime = TotalMinutes + ":" + TotalSeconds;
+            $("#PandoraSongTime").text(TotalTime);
+        } 
+    }
+    if (data[0] == 'alloff') {
+        var zone;
+        for (zone = 1; zone < 7; zone ++) {
+            $("#source_1_" + zone).val("0");
+            $("#source_2_" + zone).val("0");
+        }
+    }
+    else { 
+        $("#" + data[0]).val(data[1]);
+    }
+    
+    if (data[0] == 'error') {   alert(data[1]); }
+    
+};
+
+function sendcommand(type, name, value) {   
+    //console.log(arguments.callee.toString().match(/function\s+([^\s\(]+)/)[0]);
+    request = JSON.stringify({ type: type, name: name, value: value})
+    vibrate(); 
+    if (wsclosed) {
+    	//The socket was closed, reopen.
+		ws = new WebSocket("ws://" + window.location.host + "/ws");
+		ws.onopen = function() { wsclosed = false; };
+		ws.onmessage = function (evt) { messageReceived(evt); }
+		ws.onclose = function() { wsclosed = true; };
+
+		//Wait until the socket has a chance to be openned.
+		setTimeout(function() { ws.send(request); },500);
+	}
+	else {
+		ws.send(request);
+    }
+}
+
+function initialize() {
+    
+    setTimeout(function() {
+        sendcommand('aton','radio','get');      
+        sendcommand('aton','volume_1_1','get'); sendcommand('aton','source_1_1','get');
+        sendcommand('aton','volume_1_2','get'); sendcommand('aton','source_1_2','get');
+        sendcommand('aton','volume_1_3','get'); sendcommand('aton','source_1_3','get');
+        sendcommand('aton','volume_1_4','get'); sendcommand('aton','source_1_4','get');
+        sendcommand('aton','volume_1_5','get'); sendcommand('aton','source_1_5','get');
+        sendcommand('aton','volume_1_6','get'); sendcommand('aton','source_1_6','get');
+        sendcommand('aton','volume_2_1','get'); sendcommand('aton','source_2_1','get');
+        sendcommand('aton','volume_2_2','get'); sendcommand('aton','source_2_2','get');
+        sendcommand('aton','volume_2_3','get'); sendcommand('aton','source_2_3','get');
+        sendcommand('aton','volume_2_4','get'); sendcommand('aton','source_2_4','get');
+        sendcommand('aton','volume_2_5','get'); sendcommand('aton','source_2_5','get');
+        sendcommand('aton','volume_2_6','get'); sendcommand('aton','source_2_6','get');
+        sendcommand('aton','treble_1_1','get'); sendcommand('aton','base_1_1','get');    
+        sendcommand('aton','treble_1_2','get'); sendcommand('aton','base_1_2','get');
+        sendcommand('aton','treble_1_3','get'); sendcommand('aton','base_1_3','get');
+        sendcommand('aton','treble_1_4','get'); sendcommand('aton','base_1_4','get');
+        sendcommand('aton','treble_1_5','get'); sendcommand('aton','base_1_5','get');
+        sendcommand('aton','treble_1_6','get'); sendcommand('aton','base_1_6','get');
+        sendcommand('aton','treble_2_1','get'); sendcommand('aton','base_2_1','get');
+        sendcommand('aton','treble_2_2','get'); sendcommand('aton','base_2_2','get');
+        sendcommand('aton','treble_2_3','get'); sendcommand('aton','base_2_3','get');
+        sendcommand('aton','treble_2_4','get'); sendcommand('aton','base_2_4','get');
+        sendcommand('aton','treble_2_5','get'); sendcommand('aton','base_2_5','get');
+        sendcommand('aton','treble_2_6','get'); sendcommand('aton','base_2_6','get');
+        
+        sendcommand('pandora','stationlist','get'); sendcommand('pandora','currentsong','get'); sendcommand('pandora','currentstation','get');
+
+
+    },500);
+    
+}
+
+</script>
+   
+   
+
+</head>
+<body onload="initialize()" style="margin-top: 0px; margin-left: 0px; margin-bottom: 0px; margin-right: 0px; background-color: black;" link="#FFFFFF" vlink="#FFFFFF" alink="#FFFFFF">
+  
+  <font face="verdana" color="white" style="font-size: 4.0vmin; font-weight: bold;"><div style="display: none" id="status"></div></font> 
+   <div id="zoneContent"  style='background-color: black;'>
+   	  <table width="100%" height="80%" border="0" cellpadding="0">
+        % for location in systemConfiguration["locations"]:
+            <tr height="40%">
+                <td width="30%">
+                    <font face="verdana" color="white"><p4>${location[0]}</p4</font</a></td>
+                <td width="30%">
+                    
+                    <input type="image" src="images/RightArrow.png" alt="Right Arrow" height="40%" width="25%" onclick="sendcommand('aton','volume_${location[1]}','down')">                    
+                    <input type="number" id="volume_${location[1]}" min="0" max="100"  style="font-size: 4.0vmin; font-weight: bold; height: 100%; width: 20%; vertical-align: top;" value="" onchange="sendcommand('aton','volume_${location[1]}',this.value)">
+                    <input type="image" src="images/LeftArrow.png" alt="Left Arrow" height="40%" width="25%" onclick="sendcommand('aton','volume_${location[1]}','up')">
+
+                </td>
+                <td width="25%" height="100%"> 
+                    <select id="source_${location[1]}" style="font-size: 4.0vmin; font-weight: bold; height: 100%; width: 20%; vertical-align: top;" onchange="sendcommand('aton','source_${location[1]}', this.options[this.selectedIndex].value)">
+                        % for item in systemConfiguration["options"]:
+                            <option value="${item[1]}">${item[0]}</option>
+                        % endfor
+                    </select>     
+                </td>
+            </tr>
+        % endfor 
+           </table>
+           <hr>
+            <table width="100%" border="0" cellpadding="0">      
+           <tr height="30%">
+                   <td width="30%">
+                       <font face="verdana" color="white"><p4>All Zones</p5></font</a></td>
+                   <td>                    
+                       <input type="button" value="   Off    " height="30px" width="35px" onclick="sendcommand('aton','alloff','alloff')"> 
+                       <input type="button" value="   Mute   " height="30px" width="35px" onclick="sendcommand('aton','mute','mute')">    
+                       <input type="button" value="Unmute" height="30px" width="35px" onclick="sendcommand('aton','unmute','unmute')">                      
+                   </td>
+               </tr>
+     </table>
+   </div>
+   
+   
+   <div id="radioContent" style='display: none; background-color: black;'>
+      <div style="background-color: black; position:fixed; top:0;  width: 100%;">
+         <input type="number" id="radio" min="87.9" max="107.9" value="" onchange="sendcommand('aton','radio', this.value)" style="width: 100%; height: 50px;padding-left: 0px;border-left-width: 0px;border-right-width: 0px;padding-right: 0px;font-size:35px">
+         <hr>
+      </div>
+      <div style="position: fixed; top: 100px; width: 100%;">
+        <div  align="center">
+        <table width="100%"border="0" cellpadding="0">
+            <tr><th width="33%" /><th width="33%" /><th width="33%" /></tr>
+            <% column = 1 %>
+            % for station in systemConfiguration["radiostations"]:
+                % if column == 1:
+                    <tr style="height: 50px;">
+                % endif
+                    <% stationname = station[0]  %>
+                    % if len(stationname) == 4:
+                         <% stationname = "&nbsp;" + stationname + "&nbsp;" %>
+                    % endif
+                    <td style="text-align: center;"><a href="#" id="${station[0]}radio" onclick="sendcommand('aton','radio','${station[0]}')" class="jhb-zone large">${stationname}</a></td>
+                % if column == 3:
+                    <% column = 0 %>
+                    </tr>
+                % endif
+                <% column += 1 %>
+            % endfor 
+            % if column > 1:
+                </tr>
+            % endif
+        </table>
+        </div>
+     </div>
+   </div> 
+     
+   <div id="pandoraContent" style='display: none; background-color: black; text-decoration: none;'>
+      <div style="background-color: black; position:fixed; top:0;  width: 100%;"> 
+        <table style="padding: 0px 0px 0px 0px; border-collapse: collapse; width: 100%;">
+          
+            <tr>
+            <td width="70%">      
+                <style type="text/css" scoped>.GeneratedMarquee {font-family:'veranda';font-size:5.0vmin;height:22px;color:white;background-color:black;padding:0.0em; text-decoration: none; margin-top:4px;
+                 }
+                </style>
+                <marquee class="GeneratedMarquee" id="PandoraSong" direction="left" scrollamount="3" behavior="scroll"></marquee>
+            </td>
+            <td width="30%">
+                <font style="font-family:'veranda';font-size:5.0vmin; height:22px; color:white; background-color:black;padding:0.0em; text-decoration: none"><a id="PandoraRemainingTime">--</a>/<a id="PandoraSongTime">--</a></font>
+            </td>
+            </tr>
+        </table>    
+      </div>
+      <br>
+      <br>
+      <div> &nbsp;&nbsp;
+          <input type="image" src="images/Play.png" height="10%" width="10%" onclick="sendcommand('pandora','play','')">                   
+          <input type="image" src="images/Pause.png" height="10%" width="10%" onclick="sendcommand('pandora','pause','')">
+          <input type="image" src="images/SkipForward.png" height="10%" width="10%" onclick="sendcommand('pandora','next','')">                 
+          <span  style="font-size: 9.0vmin; " class=emoji><a href="#" id='up'>&#x1F44D;</a>  </span>
+          <span  style="font-size: 9.0vmin; " class=emoji><a href="#" id='down' >&#x1F44E;</a></span>
+          <input type="image" src="images/OnButton.png" height="15%" width="16%" id="on">               
+          <input type="image" src="images/OffButton.png" height="15%" width="16%" onclick="sendcommand('pandora','off','')">      
+      </div>    
+      <div height="100%" style="top: 20%; bottom: -15px; overflow:scroll; display: block;">       
+        <table id="stationlist" style="padding: 0px 0px 0px 0px; border-collapse: collapse;">
+             <tr><th width="7%" height="7%"</th><th width="93%" height="7%" </th></tr>
+             <td width="100"><a style="font-size: 4.2vmin; text-decoration: none;"</a> &nbsp;</td>
+             <td width="100"><a style="font-size: 4.2vmin; text-decoration: none;"</a> &nbsp;</td>
+        </table>
+     </div>
+   </div>
+
+   <div id="settingsContent" style='display: none; background-color: black'>
+      <table width="100%" border="0" cellpadding="0">
+            <tr height="40%">
+                <td width="40%">
+                <td width="25%">
+                   <font face="verdana" color="white" style="font-size: 4.0vmin;"><b>Treble</b></font>
+                </td>
+                <td width="25%"> 
+                   <font face="verdana" color="white" style="font-size: 4.0vmin;"><b>Base</b></font>
+                </td>
+            </tr>
+      </table>
+      <hr>
+      <table width="100%" height="60%" border="0" cellpadding="0">
+      
+        % for location in systemConfiguration["locations"]:
+            <tr height="45%">
+                <td width="45%">
+                    <font style="font-size: 4.0vmin; font-weight: bold;" face="verdana" color="white" >${location[0]}</font</a></td>
+                <td width="25%">
+                    <input type="number" id="treble_${location[1]}" min="0" max="100"  style="font-size: 4.0vmin; font-weight: bold; height: 100%; width: 20%; vertical-align: top;" value="" onchange="sendcommand('aton','treble_${location[1]}',this.value)">
+                </td>
+                <td width="25%"> 
+                    <input type="number" id="base_${location[1]}" min="0" max="100"  style="font-size: 4.0vmin; font-weight: bold; height: 100%; width: 20%; vertical-align: top;" value="" onchange="sendcommand('aton','base_${location[1]}',this.value)">    
+                </td>
+            </tr>
+        % endfor 
+      </table>
+      <br>
+      <font face="verdana" color="white" style="font-size: 4.0vmin; font-weight: bold;">Note: Zone must be on to set.<br><br>Version 2.0.0</font></a></td>
+   </div>
+   
+   <div id="keyboardContent" style="background-color: black; position:fixed; bottom:0; width: 100%" />
+   
+   <div style="background-color: black; position:fixed; bottom:0; width: 100%">
+        <hr>
+        <div align="center">
+            <a href="#" id='zone'><input type="image" src="images/Zone.png" height="40px" width="40px"></a>
+            <a href="#" id='radio'><input type="image" src="images/Radio_Button.png" height="40px" width="40px"></a>
+            <a href="#" id='pandora'><input type="image" src="images/Pandora.png" height="40px" width="40px"></a>
+            <a href="#" id='settings'><input type="image" src="images/Settings.png" height="40px" width="40px"></a>
+        </div>
+   </div>
+   
+</body>
+</html>
