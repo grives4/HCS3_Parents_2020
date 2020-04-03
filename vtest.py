@@ -39,6 +39,10 @@ _cmd = [which("vlc"),"-I", "rc", "--advanced", "--rc-fake-tty", "-q"]
 _process = SilentPopen(_cmd)
 flags = fcntl.fcntl(_process.stdout, fcntl.F_GETFL)
 fcntl.fcntl(_process.stdout, fcntl.F_SETFL, flags | os.O_NONBLOCK)
+readers, _, _ = select.select([_process.stdout], [], [], 1)
+for handle in readers:
+    value = handle.read(CHUNK_SIZE).strip()
+    print(value)
 _process.stdin.write("{}\n".format('add test').encode("utf-8"))
 _process.stdin.flush()
 readers, _, _ = select.select([_process.stdout], [], [], 1)

@@ -199,6 +199,12 @@ class pandora_player(threading.Thread):
         print("stdout checked")
         self._process.stdin.write("{}\n".format(cmd).encode("utf-8"))
         print("Written")
+        print("Check stdout")
+        readers, _, _ = select.select([self._process.stdout], [], [], 1)
+        for handle in readers:
+            value = handle.read(self.CHUNK_SIZE).strip()
+            print(value)
+        print("stdout checked")
         self._process.stdin.flush()
         print("Send command finished.")
 
