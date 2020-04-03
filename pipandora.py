@@ -26,7 +26,8 @@ class SilentPopen(subprocess.Popen):
         self._dev_null = open(os.devnull, "w")
         kwargs["stdin"] = subprocess.PIPE
         kwargs["stdout"] = subprocess.PIPE
-        kwargs["stderr"] = self._dev_null
+        kwargs["stderr"] = subprocess.PIPE
+        #kwargs["stderr"] = self._dev_null
         super().__init__(*args, **kwargs)
 
     def __del__(self):
