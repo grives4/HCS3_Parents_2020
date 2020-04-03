@@ -188,7 +188,7 @@ class pandora_player(threading.Thread):
         print(inspect.stack()[0][3])
         """Write command to remote process
         """
-        logger.debug('Send command: ' + cmd)
+        #logger.debug('Send command: ' + cmd)
         self._process.stdin.write("{}\n".format(cmd).encode("utf-8"))
         self._process.stdin.flush()
 
