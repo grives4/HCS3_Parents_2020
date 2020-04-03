@@ -207,6 +207,7 @@ class pandora_player(threading.Thread):
 
         self._process = SilentPopen(self._cmd)
         logger.info("Started VLC")
+        time.sleep(4)
         self._post_start()
 
     def play(self,song):
