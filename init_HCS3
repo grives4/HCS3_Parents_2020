@@ -1,0 +1,22 @@
+#! /bin/sh
+# /etc/init.d/init_HCS3
+
+case "$1" in
+  start)
+    echo "Starting HCS3"
+    sleep 10
+    cd ../../..
+    cd /home/pi/Desktop/HCS3_Parents_2020
+    nohup python3 /home/pi/Desktop/HCS3_Parents_2020/run.py&
+    ;;
+  stop)
+    echo "Stopping HCS3"
+    killall python3
+    ;;
+  *)
+    echo "Usage: /etc/init.d/init_HCS3 {start|stop}"
+    exit 1
+    ;;
+esac
+
+exit 0

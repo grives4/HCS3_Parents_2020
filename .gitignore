@@ -1,6 +1,8 @@
 # VSCode configuration
 .vscode/
 
+# Nohup
+nohup.out
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
