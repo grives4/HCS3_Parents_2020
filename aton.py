@@ -123,7 +123,7 @@ class AtonProcessor():
             if i > 10:
                break
          sp.close()
-         logger.debug("Received data from serial port:  " temp)
+         logger.debug("Received data from serial port:  " + temp)
          temp = temp.split('\r')
          for i in range(0, len(temp)):
             if temp[i].find('MDF') == -1 and temp[i].find('SIGNAL') == -1 and temp[i].find('ACK') == -1 and temp[i].find('66') > 0:
