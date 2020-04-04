@@ -79,7 +79,10 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         request = ast.literal_eval(message)
         logger.debug("Message Received:  " + request['type'] + " " + request['name'] + " " + request['value'])
 
-        if request['type'] == "aton":
+        if request['type'] == "":
+            aton_processor.ProcessRequest(self,request)
+            pandora_send_message.put(request)
+        elif request['type'] == "aton":
             aton_processor.ProcessRequest(self,request)
         elif request['type'] == 'pandora':
             pandora_send_message.put(request)
@@ -116,6 +119,5 @@ if __name__ == '__main__':
    #Start web server
    parse_command_line()
    app.listen(options.port)
-
    tornado.ioloop.PeriodicCallback(Process_Receiving_Queue,100).start()
    tornado.ioloop.IOLoop.instance().start()
