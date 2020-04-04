@@ -232,12 +232,6 @@ class pandora_player(threading.Thread):
         
         logger.info("Started VLC")
         time.sleep(1)
-        print("Check stdout")
-        readers, _, _ = select.select([self._process.stdout], [], [], 1)
-        for handle in readers:
-            value = handle.read(self.CHUNK_SIZE).strip()
-            print(value)
-        print("stdout checked")
         self._post_start()
 
     def play(self,song):
