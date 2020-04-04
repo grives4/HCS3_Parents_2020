@@ -213,6 +213,9 @@ function messageReceived(evt) {
             $("#source_2_" + zone).val("0");
         }
     }
+    if (data[0] == 'reload') {
+        window.location.reload(true); 
+    }
     else { 
         $("#" + data[0]).val(data[1]);
     }
@@ -421,10 +424,13 @@ function initialize() {
         % endfor 
       </table>
       <br>
+      <font face="verdana" color="white" style="font-size: 4.0vmin; font-weight: bold;">Note: Zone must be on to set.<br><br>Version 2.0.0</font></a></td>
+      <br>
       <br>
       <input type="button" value="   Flush Cache and Reload    " height="30px" width="35px" onclick="sendcommand('','flushcache','flushcache')"> 
-      <font face="verdana" color="white" style="font-size: 4.0vmin; font-weight: bold;">Note: Zone must be on to set.<br><br>Version 2.0.0</font></a></td>
-   </div>
+      <br>
+      <br>
+    </div>
    
    <div id="keyboardContent" style="background-color: black; position:fixed; bottom:0; width: 100%" />
    
