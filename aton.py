@@ -84,6 +84,9 @@ class AtonProcessor():
             else:
                self.write_to_serial_port('&AH66,BAS,' + str(requestName[2]) + ',+,' + str(base),requestName[1])
             self.cache[request['name']] = base
+         elif (requestName[0] == 'flushcache'):
+            self.cache = {}
+            callbacks.send_message(['reload'])
          else:
             callbacks.send_message(['error, Error: Could not process: ' + request['name'] + ' >> ' + request['value']])
       else:

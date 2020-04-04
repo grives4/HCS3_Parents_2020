@@ -139,11 +139,13 @@ class pandora_player(threading.Thread):
                 elif request['name'] == "dislike":
                     self.dislike_song(self.pandora_cache['CurrentSong'])
                     self.get_next_song()
-                elif request['name'] == "off" or requst['name'] == "alloff":
+                elif request['name'] in ['off','alloff']:
                     self.playing = False
                     self.pandora_cache['CurrentSong'] = '---- Off ----'
                     self.send_message.put(['pandora,currentsong,---- Off ----'])      
                     self._send_cmd("stop")
+                elif (requestName[0] == 'flushcache'):
+                    self.pandora_cache = { 'CurrentSong': '---- Off ----' }
             except:
                 pass
             

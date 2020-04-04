@@ -28,9 +28,9 @@ from queue import Queue
 
 ##################  Set Logging  ##################
 logger = logging.getLogger('HCS3')
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 fh = logging.FileHandler('hcs3.log')
-fh.setLevel(logging.INFO)  #INFO, DEBUG are good options.
+fh.setLevel(logging.DEBUG)  #INFO, DEBUG are good options.
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 fh.setFormatter(formatter)
 logger.addHandler(fh)
