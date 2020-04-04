@@ -84,6 +84,7 @@ class pandora_player(threading.Thread):
                     self.station = self.pandora_cache['Stations'][self.pandora_cache['SelectedStation']]
                     logger.debug('Station set to: ' + self.station.name)
                     self.send_message.put(['pandora,currentstation,' + str(self.pandora_cache['SelectedStation'])]) 
+                    self.station_playlist = None
                     self.get_next_song()
                 elif request['name'] == "pause":
                     if self.paused:
