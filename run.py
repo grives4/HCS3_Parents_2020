@@ -27,8 +27,8 @@ import pdb
 from queue import Queue
 
 #Set logging mode
-#mode = logging.DEBUG
-mode = logging.INFO
+mode = logging.DEBUG
+#mode = logging.INFO
 
 
 ##################  Set Logging  ##################

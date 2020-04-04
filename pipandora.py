@@ -82,6 +82,7 @@ class pandora_player(threading.Thread):
                 elif request['name'] == "setstation":
                     self.pandora_cache['SelectedStation'] = int(request['value'])
                     self.station = self.pandora_cache['Stations'][self.pandora_cache['SelectedStation']]
+                    logger.debug('Station set to: ' + self.station.name)
                     self.send_message.put(['pandora,currentstation,' + str(self.pandora_cache['SelectedStation'])]) 
                     self.get_next_song()
                 elif request['name'] == "pause":
@@ -184,7 +185,7 @@ class pandora_player(threading.Thread):
     def _send_cmd(self, cmd):
         """Write command to remote process
         """
-        logger.debug('Send command: ' + cmd)
+        #logger.debug('Send command: ' + cmd)
         self._process.stdin.write("{}\n".format(cmd).encode("utf-8"))
         self._process.stdin.flush()
 
