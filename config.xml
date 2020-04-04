@@ -4,8 +4,8 @@
       <item location="2" address="/dev/ttyUSB1" baud="19200"/>
    </config>
    <config name="locations">
-      <item name="Great Room Front" location="1_2" zone="2" chassis="1"/>
-      <item name="Great Room Rear"  location="1_1" zone="1" chassis="1"/>
+      <item name="Great Room Front" location="1_1" zone="2" chassis="1"/>
+      <item name="Great Room Rear"  location="1_2" zone="1" chassis="1"/>
       <item name="Atrium 1"         location="1_3" zone="3" chassis="1"/>
       <item name="Atrium 2"         location="1_4" zone="4" chassis="1"/>
       <item name="Master Bedroom"   location="1_5" zone="5" chassis="1"/>
