@@ -14,7 +14,7 @@ import select
 import socket
 from shutil import which
 from queue import Queue
-import inspect
+
 
 logger = logging.getLogger('HCS3')
 
@@ -26,8 +26,7 @@ class SilentPopen(subprocess.Popen):
         self._dev_null = open(os.devnull, "w")
         kwargs["stdin"] = subprocess.PIPE
         kwargs["stdout"] = subprocess.PIPE
-        kwargs["stderr"] = subprocess.PIPE
-        #kwargs["stderr"] = self._dev_null
+        kwargs["stderr"] = self._dev_null
         super().__init__(*args, **kwargs)
 
     def __del__(self):
@@ -52,7 +51,7 @@ class pandora_player(threading.Thread):
 
 
     def __init__(self,pandora_send_message,pandora_receive_message):
-        print(inspect.stack()[0][3])
+   
         super(pandora_player, self).__init__()
       
         self.send_message = pandora_receive_message 
@@ -69,7 +68,7 @@ class pandora_player(threading.Thread):
         self.pandora_cache['Stations'] = self.pandora_client.get_station_list()
 
     def run(self):
-        print(inspect.stack()[0][3])
+        
         while True:
             #Wait for either the end of a song or item in queue
             try:
@@ -153,7 +152,6 @@ class pandora_player(threading.Thread):
                 readers, _, _ = select.select([self._process.stdout], [], [], 1)
                 for handle in readers:
                     value = handle.read(self.CHUNK_SIZE).strip()
-                    print(value)
                     if "state stopped" in value.decode("utf-8"):
                         self.get_next_song()
 
@@ -167,50 +165,31 @@ class pandora_player(threading.Thread):
         caring about how much output there is we switch stdout to nonblocking
         mode and just read a large chunk of data.
         """
-        print(inspect.stack()[0][3])
         flags = fcntl.fcntl(self._process.stdout, fcntl.F_GETFL)
         fcntl.fcntl(self._process.stdout, fcntl.F_SETFL, flags | os.O_NONBLOCK)
 
     def _load_track(self, song):
-        print(inspect.stack()[0][3])
         self._send_cmd("add {}".format(song.audio_url))
 
     def _player_stopped(self, value):
-        print(inspect.stack()[0][3])
         return "state stopped" in value.decode("utf-8")
 
     def _loop_hook(self):
-        print(inspect.stack()[0][3])
         if (time.time() - self._last_poll) >= self.POLL_INTERVAL:
             self._send_cmd("status")
             self._last_poll = time.time()
 
     def _send_cmd(self, cmd):
-        print(inspect.stack()[0][3])
         """Write command to remote process
         """
-        print("Before logger comment.")
         logger.debug('Send command: ' + cmd)
-        print("After logger comment.")
-        print("Check stdout")
-        readers, _, _ = select.select([self._process.stdout], [], [], 1)
-        for handle in readers:
-            value = handle.read(self.CHUNK_SIZE).strip()
-            print(value)
-        print("stdout checked")
         self._process.stdin.write("{}\n".format(cmd).encode("utf-8"))
-        print("Written")
-        print("Check stdout")
-        readers, _, _ = select.select([self._process.stdout], [], [], 1)
-        for handle in readers:
-            value = handle.read(self.CHUNK_SIZE).strip()
-            print(value)
-        print("stdout checked")
         self._process.stdin.flush()
-        print("Send command finished.")
+
+
+
 
     def stop(self):
-        print(inspect.stack()[0][3])
         self._send_cmd("stop")
 
     def __del__(self):
@@ -218,7 +197,6 @@ class pandora_player(threading.Thread):
             self._process.kill()
 
     def start_VLC(self):
-        print(inspect.stack()[0][3])
         """Ensure player backing process is started
         """
         if self._process and self._process.poll() is None:
@@ -226,16 +204,12 @@ class pandora_player(threading.Thread):
 
         if not getattr(self, "_cmd"):
             raise RuntimeError("Player command is not configured")
-        print(self._cmd)
+
         self._process = SilentPopen(self._cmd)
-        print(self._cmd)
-        
         logger.info("Started VLC")
-        time.sleep(1)
         self._post_start()
 
     def play(self,song):
-        print(inspect.stack()[0][3])
         """Play a new song from a Pandora model
 
         Returns once the stream starts but does not shut down the remote audio
@@ -243,12 +217,12 @@ class pandora_player(threading.Thread):
         input.
         """
 
+        self.pandora_cache['CurrentSong'] = song
+        self.pandora_cache['CurrentRemainingLength'] = song.track_length
+        self.pandora_cache['CurrentSongStartTime'] = int(round(time.time()))
         if song.is_ad:
             self.send_message.put(['pandora,currentsong,Advertisement','pandora,remainingtime, 10','pandora,totaltime, 10']) 
         else:
-            self.pandora_cache['CurrentSong'] = song
-            self.pandora_cache['CurrentRemainingLength'] = song.track_length
-            self.pandora_cache['CurrentSongStartTime'] = int(round(time.time()))
             self.send_message.put(['pandora,currentsong,' + song.song_name + ' by ' + song.artist_name,'pandora,remainingtime,' + str(song.track_length),'pandora,totaltime,'+ str(song.track_length)]) 
         
         self.start_VLC()
@@ -258,16 +232,13 @@ class pandora_player(threading.Thread):
         self.playing = True
 
     def like_song(self, song):
-        print(inspect.stack()[0][3])
         song.thumbs_up()
     
     def dislike_song(self, song):
-        print(inspect.stack()[0][3])
         song.thumbs_down()
 
 
     def get_next_song(self):
-        print(inspect.stack()[0][3])
         if self.station_playlist == None:
             self.station_playlist = self.station.get_playlist()
         try:
@@ -279,7 +250,6 @@ class pandora_player(threading.Thread):
         self.play(song)
     
     def get_pandora_client(self):
-        print(inspect.stack()[0][3])
         cfg_file = os.environ.get("PYDORA_CFG", "")
         builder = clientbuilder.PydoraConfigFileBuilder(cfg_file)
         if builder.file_exists:
