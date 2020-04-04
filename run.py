@@ -26,11 +26,16 @@ import logging
 import pdb
 from queue import Queue
 
+#Set logging mode
+#mode = logging.DEBUG
+mode = logging.INFO
+
+
 ##################  Set Logging  ##################
 logger = logging.getLogger('HCS3')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(mode)
 fh = logging.FileHandler('hcs3.log')
-fh.setLevel(logging.DEBUG)  #INFO, DEBUG are good options.
+fh.setLevel(mode)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 fh.setFormatter(formatter)
 logger.addHandler(fh)
