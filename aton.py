@@ -55,8 +55,8 @@ class AtonProcessor():
             self.cache[request['name']] = self.get_volume(requestName[2],requestName[1])
             callbacks.send_message([request['name'] +',' + self.cache[request['name']]])
          elif (requestName[0] == 'alloff'):
-            self.write_to_serial_port('&AH66,KEY,12,0000','1')
-            self.write_to_serial_port('&AH66,KEY,12,0000','2')
+            self.write_to_serial_port('&AH66,KEY,0,0000','1')
+            self.write_to_serial_port('&AH66,KEY,0,0000','2')
             callbacks.send_message(['alloff'])   
          elif (requestName[0] == 'mute'):
             for channel in range(1,7):
