@@ -157,7 +157,7 @@ function messageReceived(evt) {
                 var row = table.insertRow(0);
                 var cell1 = row.insertCell(0);
                 var cell2 = row.insertCell(1);
-                cell1.innerHTML = '<input type="radio" name="PandoraStations" value="' + (i-1) + '" onchange="sendcommand(\'pandora\',\'setstation\',\'' + (i-1) + '\')" style="padding: 0px 0px 0px 0px; width: 32px; height: 32px;" name="address"/>';
+                cell1.innerHTML = '<input type="radio" name="PandoraStations" value="' + i + '" onchange="sendcommand(\'pandora\',\'setstation\',\'' + i + '\')" style="padding: 0px 0px 0px 0px; width: 32px; height: 32px;" name="address"/>';
                 cell2.innerHTML = '<a href="#" style="padding: 0px 0px 0px 0px; font-size: 6.0vmin; text-decoration: none;" id="' + stations[i] + 'pandora">' + stations[i] + '</a>';
             }
         }
@@ -295,9 +295,9 @@ function initialize() {
                     <font face="verdana" color="white"><p4>${location[0]}</p4</font</a></td>
                 <td width="30%">
                     
-                    <input type="image" src="images/RightArrow.png" alt="Right Arrow" height="40%" width="25%" onclick="sendcommand('aton','volume_${location[1]}','down')">                    
+                    <input type="image" src="images/RightArrow.png" alt="Right Arrow" height="35%" width="25%" onclick="sendcommand('aton','volume_${location[1]}','down')">                    
                     <input type="number" id="volume_${location[1]}" min="0" max="100"  style="font-size: 4.0vmin; font-weight: bold; height: 100%; width: 20%; vertical-align: top;" value="" onchange="sendcommand('aton','volume_${location[1]}',this.value)">
-                    <input type="image" src="images/LeftArrow.png" alt="Left Arrow" height="40%" width="25%" onclick="sendcommand('aton','volume_${location[1]}','up')">
+                    <input type="image" src="images/LeftArrow.png" alt="Left Arrow" height="35%" width="25%" onclick="sendcommand('aton','volume_${location[1]}','up')">
 
                 </td>
                 <td width="25%" height="100%"> 
