@@ -4,23 +4,23 @@
       <item location="2" address="/dev/ttyUSB1" baud="19200"/>
    </config>
    <config name="locations">
-      <item name="Great Room Front" location="1_1" zone="2" chassis="1"/>
-      <item name="Great Room Rear"  location="1_2" zone="1" chassis="1"/>
-      <item name="Atrium 1"         location="1_3" zone="3" chassis="1"/>
-      <item name="Atrium 2"         location="1_4" zone="4" chassis="1"/>
-      <item name="Master Bedroom"   location="1_5" zone="5" chassis="1"/>
-      <item name="Master Bath"      location="1_6" zone="6" chassis="1"/>
-      <item name="Hobby Room"       location="2_1" zone="1" chassis="2"/>
-      <item name="Garage"           location="2_2" zone="2" chassis="2"/>
-      <item name="Back Porch"       location="2_3" zone="3" chassis="2"/>
-      <item name="Lower Deck"       location="2_4" zone="4" chassis="2"/>
-      <item name="Upstairs Porch"   location="2_5" zone="5" chassis="2"/>
+      <item name="Great Room Front" location="1_1"/>
+      <item name="Great Room Rear"  location="1_2"/>
+      <item name="Atrium 1"         location="1_3"/>
+      <item name="Atrium 2"         location="1_4"/>
+      <item name="Master Bedroom"   location="1_5"/>
+      <item name="Master Bath"      location="1_6"/>
+      <item name="Hobby Room"       location="2_1"/>
+      <item name="Garage"           location="2_2"/>
+      <item name="Back Porch"       location="2_3"/>
+      <item name="Lower Deck"       location="2_4"/>
+      <item name="Upstairs Porch"   location="2_5"/>
    </config> 
    <config name="options">
-      <item name="Off"           location="0"   source="0"/>
-      <item name="Radio"         location="R1"  source="R1"/>
-      <item name="Pi-Pandora"    location="4"   source="4"/>
-      <item name="Phone-Pandora" location="3"   source="3"/>
+      <item name="Off"           location="0"/>
+      <item name="Radio"         location="R1"/>
+      <item name="Pi-Pandora"    location="4"/>
+      <item name="Phone-Pandora" location="3"/>
    </config> 
    <config name="radiostations">
       <item name="90.5"    location=""/>
