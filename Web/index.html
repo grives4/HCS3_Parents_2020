@@ -295,9 +295,9 @@ function initialize() {
                     <font face="verdana" color="white"><p4>${location[0]}</p4</font</a></td>
                 <td width="30%">
                     
-                    <input type="image" src="images/RightArrow.png" alt="Right Arrow" height="38%" width="25%" onclick="sendcommand('aton','volume_${location[1]}','down')">                    
+                    <input type="image" src="images/RightArrow.png" alt="Right Arrow" height="35%" width="25%" onclick="sendcommand('aton','volume_${location[1]}','down')">                    
                     <input type="number" id="volume_${location[1]}" min="0" max="100"  style="font-size: 4.0vmin; font-weight: bold; height: 90%; width: 20%; vertical-align: top;" value="" onchange="sendcommand('aton','volume_${location[1]}',this.value)">
-                    <input type="image" src="images/LeftArrow.png" alt="Left Arrow" height="38%" width="25%" onclick="sendcommand('aton','volume_${location[1]}','up')">
+                    <input type="image" src="images/LeftArrow.png" alt="Left Arrow" height="35%" width="25%" onclick="sendcommand('aton','volume_${location[1]}','up')">
 
                 </td>
                 <td width="25%" height="100%"> 
@@ -431,8 +431,6 @@ function initialize() {
       <br>
       <br>
     </div>
-   
-   <div id="keyboardContent" style="background-color: black; position:fixed; bottom:0; width: 100%" />
    
    <div style="background-color: black; position:fixed; bottom:0; width: 100%">
         <hr>

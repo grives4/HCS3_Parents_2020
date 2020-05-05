@@ -4,11 +4,11 @@
       <item location="2" address="/dev/ttyUSB1" baud="19200"/>
    </config>
    <config name="locations">
-      <item name="Great Room Front" location="1_1"/>
-      <item name="Great Room Rear"  location="1_2"/>
+      <item name="GR Front" location="1_1"/>
+      <item name="GR Rear"  location="1_2"/>
       <item name="Atrium 1"         location="1_3"/>
       <item name="Atrium 2"         location="1_4"/>
-      <item name="Master Bedroom"   location="1_5"/>
+      <item name="Master Bdrm"   location="1_5"/>
       <item name="Master Bath"      location="1_6"/>
       <item name="Hobby Room"       location="2_1"/>
       <item name="Garage"           location="2_2"/>

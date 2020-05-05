@@ -77,6 +77,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         #Record when you receive new clients.
         wsClients.append(self)
+        logger.debug("Open connection.")
         self.set_nodelay(True)
         
     def on_message(self, message):
@@ -100,6 +101,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                   
     def on_close(self):
         #Once the connection is closed, remove the client.
+        logger.debug("Closed connection.")
         wsClients.remove(self)
         
     def check_origin(self, origin):

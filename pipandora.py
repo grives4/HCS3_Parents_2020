@@ -72,7 +72,7 @@ class pandora_player(threading.Thread):
         while True:
             #Wait for either the end of a song or item in queue
             try:
-                request = self.receive_message.get(True, 0.1)
+                request = self.receive_message.get(True, 0.5)
                 logger.debug("Pandora Request: " + str(request))
                 if request['name'] == "stationlist": 
                     stations = ''
@@ -157,6 +157,9 @@ class pandora_player(threading.Thread):
                 for handle in readers:
                     value = handle.read(self.CHUNK_SIZE).strip()
                     if "state stopped" in value.decode("utf-8"):
+                        logger.debug("VLC Status: " + value.decode("utf-8"))
+                        #import pdb
+                        #pdb.set_trace()
                         self.get_next_song()
 
     def _post_start(self):
@@ -222,11 +225,11 @@ class pandora_player(threading.Thread):
         """
 
         self.pandora_cache['CurrentSong'] = song
-        self.pandora_cache['CurrentRemainingLength'] = song.track_length
         self.pandora_cache['CurrentSongStartTime'] = int(round(time.time()))
         if song.is_ad:
             self.send_message.put(['pandora,currentsong,Advertisement','pandora,remainingtime, 10','pandora,totaltime, 10']) 
         else:
+            self.pandora_cache['CurrentRemainingLength'] = song.track_length
             self.send_message.put(['pandora,currentsong,' + song.song_name + ' by ' + song.artist_name,'pandora,remainingtime,' + str(song.track_length),'pandora,totaltime,'+ str(song.track_length)]) 
         
         self.start_VLC()
