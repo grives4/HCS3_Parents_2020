@@ -189,7 +189,7 @@ class pandora_player(threading.Thread):
     def _send_cmd(self, cmd):
         """Write command to remote process
         """
-        #logger.debug('Send command: ' + cmd)
+        logger.debug('Send command: ' + cmd)
         self._process.stdin.write("{}\n".format(cmd).encode("utf-8"))
         self._process.stdin.flush()
 
@@ -246,6 +246,7 @@ class pandora_player(threading.Thread):
 
 
     def get_next_song(self):
+        logger.debug("Get Next Song")
         if self.station_playlist == None:
             self.station_playlist = self.station.get_playlist()
         try:
