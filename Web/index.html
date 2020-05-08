@@ -49,6 +49,16 @@ function vibrate() {
     }
 }
 
+
+//https://stackoverflow.com/questions/4656387/how-to-detect-in-ios-webapp-when-switching-back-to-safari-from-background
+window.addEventListener('focus', initialize);
+window.addEventListener('pageshow', initialize);
+window.addEventListener('visibilitychange', function() {
+    if (!document.hidden) { initialize(); }
+});
+
+
+
 jQuery(document).ready(function(){
 
 	jQuery('#zone').live('click', function(event) {     
